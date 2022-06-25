@@ -1,6 +1,7 @@
 from pyspark.sql import SparkSession
 import argparse
-from util.logger import Logger
+# from util.logger import Logger
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType
 
 if __name__ == '__main__':
     # retrieving arguments
@@ -37,9 +38,24 @@ if __name__ == '__main__':
     if not str(input_gcs_bucket).startswith("gs://"):
         input_gcs_bucket = "gs://{}".format(input_gcs_bucket)
 
-    inputdf = spark.read \
-        .format('{}'.format(input_file_format)) \
-        .option("header", "{}".format(input_file_header)) \
-        .load("{}/{}/*".format(input_gcs_bucket, src_object_nm))
+    # if input_file_header:
+    #     inputdf = spark.read \
+    #         .format('{}'.format(input_file_format)) \
+    #         .option("header", "{}".format(input_file_header)) \
+    #         .load("{}/{}/*".format(input_gcs_bucket, src_object_nm))
+    # else:
+    #     inputdf = spark.read \
+    #         .format('{}'.format(input_file_format)) \
+    #         .load("{}/{}/*".format(input_gcs_bucket, src_object_nm))
 
-    print(inputdf.show())
+    # create sparkschema
+    schema_lst = []
+    for line in open("../../config/{}_schema.csv".format(src_object_nm), "r").readline():
+        val_type = line.split(",")[1]
+        val_name = line.split(",")[0]
+        if val_type.lower() == "int":
+            schema_lst.append(StructField(val_name, IntegerType()))
+        elif val_type.lower() == "string":
+            schema_lst.append(StructField(val_name, StringType()))
+
+    schema = StructType(schema_lst)
