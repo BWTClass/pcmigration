@@ -3,7 +3,7 @@ import logging
 
 class Logger:
 
-    def logging(log_path):
+    def logging(self,log_path):
         # create logger with 'spam_application'
         logger = logging.getLogger('Validation Job')
         logger.setLevel(logging.DEBUG)

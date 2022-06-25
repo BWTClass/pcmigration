@@ -3,6 +3,7 @@ import argparse
 import sys
 sys.path.insert(0, "../../scripts")
 from util.logger import Logger
+from util.utils import Utils
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType
 
 if __name__ == '__main__':
@@ -31,7 +32,8 @@ if __name__ == '__main__':
     input_file_format = args.input_file_format
 
     # Importing logging
-    # logger = Logger.logging(log_path=str(src_object_nm) + '.log')
+    # log = Logger()
+    # logger = log.logging(log_path=str(src_object_nm) + '.log')
     # logger.info("Started processing for source object : {}".format(src_object_nm))
 
     spark = SparkSession.builder.master('local[*]').appName("Spark Validation").getOrCreate()
@@ -40,25 +42,22 @@ if __name__ == '__main__':
     if not str(input_gcs_bucket).startswith("gs://"):
         input_gcs_bucket = "gs://{}".format(input_gcs_bucket)
 
-    # if input_file_header:
-    #     inputdf = spark.read \
-    #         .format('{}'.format(input_file_format)) \
-    #         .option("header", "{}".format(input_file_header)) \
-    #         .load("{}/{}/*".format(input_gcs_bucket, src_object_nm))
-    # else:
-    #     inputdf = spark.read \
-    #         .format('{}'.format(input_file_format)) \
-    #         .load("{}/{}/*".format(input_gcs_bucket, src_object_nm))
+    # retrive schema
+    util_obj = Utils()
+    schema = util_obj.schema_generate(src_object_nm=src_object_nm)
 
-    # create sparkschema
-    schema_lst = []
-    for line in open("../../config/{}_schema.csv".format(src_object_nm), "r").readlines():
-        print("line : {}".format(line))
-        val_type = line.split(",")[1]
-        val_name = line.split(",")[0]
-        if val_type.lower() == "int":
-            schema_lst.append(StructField(val_name, IntegerType()))
-        elif val_type.lower() == "string":
-            schema_lst.append(StructField(val_name, StringType()))
 
-    schema = StructType(schema_lst)
+    if input_file_header:
+        inputdf = spark.read \
+            .format('{}'.format(input_file_format)) \
+            .option("header", "{}".format(input_file_header))\
+            .schema(schema) \
+            .load("{}/{}/*".format(input_gcs_bucket, src_object_nm))
+    else:
+        inputdf = spark.read \
+            .format('{}'.format(input_file_format)) \
+            .schema(schema) \
+            .load("{}/{}/*".format(input_gcs_bucket, src_object_nm))
+
+    print(inputdf)
+
