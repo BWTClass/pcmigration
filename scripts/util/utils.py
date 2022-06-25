@@ -11,7 +11,6 @@ class Utils:
         try:
             schema_lst = []
             for line in open("../../config/{}_schema.csv".format(src_object_nm), "r").readlines():
-                print("line : {}".format(line))
                 val_type = line.split(",")[1]
                 val_name = line.split(",")[0]
                 if val_type.lower() == "int":

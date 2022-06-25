@@ -46,7 +46,7 @@ if __name__ == '__main__':
     util_obj = Utils()
     schema = util_obj.schema_generate(src_object_nm=src_object_nm)
 
-
+    print(schema)
     if input_file_header:
         inputdf = spark.read \
             .format('{}'.format(input_file_format)) \
