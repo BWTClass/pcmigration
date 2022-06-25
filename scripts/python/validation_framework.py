@@ -1,6 +1,8 @@
 from pyspark.sql import SparkSession
 import argparse
-from ..util.logger import Logger
+import sys
+sys.path.insert(0, "../../scripts")
+from util.logger import Logger
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType
 
 if __name__ == '__main__':
@@ -51,6 +53,7 @@ if __name__ == '__main__':
     # create sparkschema
     schema_lst = []
     for line in open("../../config/{}_schema.csv".format(src_object_nm), "r").readline():
+        print("line : {}".format(line))
         val_type = line.split(",")[1]
         val_name = line.split(",")[0]
         if val_type.lower() == "int":
