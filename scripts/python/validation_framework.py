@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession
 import argparse
-# from util.logger import Logger
+from ..util.logger import Logger
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType
 
 if __name__ == '__main__':
