@@ -52,7 +52,7 @@ if __name__ == '__main__':
 
     # create sparkschema
     schema_lst = []
-    for line in open("../../config/{}_schema.csv".format(src_object_nm), "r").readline():
+    for line in open("../../config/{}_schema.csv".format(src_object_nm), "r").readlines():
         print("line : {}".format(line))
         val_type = line.split(",")[1]
         val_name = line.split(",")[0]
